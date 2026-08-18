@@ -1,31 +1,119 @@
-<!-- Exemplo básico do trecho de envio no seu index.html -->
-<input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="enviarFoto(this)">
-<button onclick="document.getElementById('cameraInput').click()">Tirar Foto do Ambiente</button>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content5="width=device-width, initial-scale=1.0">
+    <title>FloraLab - Analisador de Ambientes</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f7f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: #white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        h1 { color: #2c5e3b; font-size: 24px; margin-bottom: 10px; }
+        p { color: #666; font-size: 14px; margin-bottom: 20px; }
+        .btn-camera {
+            background-color: #2c5e3b;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(44, 94, 59, 0.3);
+            transition: background 0.2s;
+        }
+        .btn-camera:active { background-color: #1e4028; }
+        #preview {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: none;
+        }
+        #resultadoAnalise {
+            margin-top: 20px;
+            text-align: left;
+            background: #f9fbf9;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #2c5e3b;
+            font-size: 14px;
+            line-height: 1.5;
+            display: none;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
 
-<div id="resultadoAnalise"></div>
+    <div class="container">
+        <h1>🌿 FloraLab</h1>
+        <p>Aponte a câmera para o seu ambiente e descubra quais plantas se adaptam melhor.</p>
 
-<script>
-async function enviarComando(file) {
-    let formData = new FormData();
-    formData.append("file", file);
-    
-    document.getElementById("resultadoAnalise").innerText = "Analisando o ambiente com IA...";
-    
-    let response = await fetch('/analisar-ambiente', {
-        method: 'POST',
-        body: formData
-    });
-    
-    let data = await response.json();
-    if(response.ok) {
-        document.getElementById("resultadoAnalise").innerHTML = data.resultado.replace(/\n/g, '<br>');
-    } else {
-        document.getElementById("resultadoAnalise").innerText = "Erro na análise: " + data.detail;
-    }
-}
-function enviarFoto(input) {
-    if (input.files && input.files[0]) {
-        enviarComando(input.files[0]);
-    }
-}
-</script>
+        <!-- Input de câmera nativo do celular -->
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="processarFoto(this)">
+        
+        <button class="btn-camera" onclick="document.getElementById('cameraInput').click()">📸 Tirar Foto do Ambiente</button>
+
+        <img id="preview" alt="Foto do ambiente">
+
+        <div id="resultadoAnalise"></div>
+    </div>
+
+    <script>
+        async function processarFoto(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Mostra o preview da foto na tela
+                const preview = document.getElementById('preview');
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+
+                const resultadoDiv = document.getElementById('resultadoAnalise');
+                resultadoDiv.style.display = 'block';
+                resultadoDiv.innerHTML = "🌱 Analisando luz, espaço e buscando as melhores plantas com IA...";
+
+                let formData = new FormData();
+                formData.append("file", file);
+
+                try {
+                    let response = await fetch('/analisar-ambiente', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    let data = await response.json();
+
+                    if (response.ok) {
+                        resultadoDiv.innerHTML = "<strong>💡 Diagnóstico e Sugestões:</strong><br><br>" + data.resultado;
+                    } else {
+                        resultadoDiv.innerHTML = "❌ Erro na análise: " + (data.detail || "Tente novamente.");
+                    }
+                } catch (error) {
+                    resultadoDiv.innerHTML = "❌ Erro de conexão com o servidor.";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
