@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FloraLab - Analisador de Ambientes</title>
+    <title>FloraLab - Recomendações de Plantas</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -19,18 +19,19 @@
             max-width: 500px;
             width: 100%;
             background: white;
-            padding: 20px;
+            padding: 24px;
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             text-align: center;
+            box-sizing: border-box;
         }
-        h1 { color: #2c5e3b; font-size: 24px; margin-bottom: 10px; }
-        p { color: #666; font-size: 14px; margin-bottom: 20px; }
+        h1 { color: #2c5e3b; font-size: 26px; margin-bottom: 8px; }
+        p { color: #666; font-size: 14px; margin-bottom: 24px; line-height: 1.4; }
         .btn-camera {
             background-color: #2c5e3b;
             color: white;
             border: none;
-            padding: 14px 24px;
+            padding: 16px 24px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 50px;
@@ -42,7 +43,7 @@
         .btn-camera:active { background-color: #1e4028; }
         #preview {
             width: 100%;
-            max-height: 300px;
+            max-height: 250px;
             object-fit: cover;
             border-radius: 12px;
             margin-top: 15px;
@@ -52,25 +53,26 @@
             margin-top: 20px;
             text-align: left;
             background: #f9fbf9;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #2c5e3b;
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 5px solid #2c5e3b;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
             display: none;
-            white-space: pre-line;
+            word-break: break-word;
         }
+        #resultadoAnalise h3 { color: #2c5e3b; margin-top: 0; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>🌿 FloraLab</h1>
-        <p>Aponte a câmera para o seu ambiente e descubra quais plantas se adaptam melhor.</p>
+        <p>Aponte a câmera para o local onde quer colocar verde. O app analisa a luz e escolhe as plantas perfeitas para você!</p>
 
         <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="processarFoto(this)">
         
-        <button class="btn-camera" onclick="document.getElementById('cameraInput').click()">📸 Tirar Foto do Ambiente</button>
+        <button class="btn-camera" onclick="document.getElementById('cameraInput').click()">📸 Analisar Espaço & Plantas</button>
 
         <img id="preview" alt="Foto do ambiente">
 
@@ -88,7 +90,7 @@
 
                 const resultadoDiv = document.getElementById('resultadoAnalise');
                 resultadoDiv.style.display = 'block';
-                resultadoDiv.innerHTML = "🌱 Analisando luz, espaço e buscando as melhores plantas com IA...";
+                resultadoDiv.innerHTML = "🌱 <strong>Avaliando luminosidade e selecionando as plantas ideais...</strong>";
 
                 let formData = new FormData();
                 formData.append("file", file);
@@ -102,12 +104,17 @@
                     let data = await response.json();
 
                     if (response.ok) {
-                        resultadoDiv.innerHTML = "<strong>💡 Diagnóstico e Sugestões:</strong><br><br>" + data.resultado;
+                        // Formata a resposta para destacar bem na tela do celular
+                        let textoFormatado = data.resultado
+                            .replace(/\*\*(.*?)\*\* /g, '<strong>$1</strong><br>')
+                            .replace(/\n/g, '<br>');
+                        
+                        resultadoDiv.innerHTML = "<h3>💡 Diagnóstico & Plantas Ideais</h3>" + textoFormatado;
                     } else {
-                        resultadoDiv.innerHTML = "❌ Erro na análise: " + (data.detail || "Tente novamente.");
+                        resultadoDiv.innerHTML = "❌ <strong>Erro na análise:</strong> " + (data.detail || "Tente novamente.");
                     }
                 } catch (error) {
-                    resultadoDiv.innerHTML = "❌ Erro de conexão com o servidor.";
+                    resultadoDiv.innerHTML = "❌ <strong>Erro de conexão com o servidor.</strong>";
                 }
             }
         }
