@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloraLab - Análise de Plantas com IA</title>
+    <!-- Tailwind CSS para estilização rápida e moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-emerald-50 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="bg-white shadow-xl rounded-2xl p-8 max-w-lg w-full">
+        <h1 class="text-3xl font-bold text-emerald-800 text-center mb-2">🌿 FloraLab</h1>
+        <p class="text-gray-600 text-center mb-6">Envie a foto de uma planta para descobrir o nome, saúde e dicas de cuidados.</p>
+
+        <!-- Formulário de Upload -->
+        <form id="uploadForm" class="space-y-4">
+            <div class="border-2 border-dashed border-emerald-300 rounded-xl p-6 text-center hover:border-emerald-500 transition cursor-pointer">
+                <input type="file" id="imageInput" accept="image/*" capture="environment" class="...">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:bg-emerald-700 transition">
+                Analisar Planta
+            </button>
+        </form>
+
+        <!-- Área de Loading -->
+        <div id="loading" class="hidden text-center mt-6">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mx-auto"></div>
+            <p class="text-emerald-700 mt-2 font-medium">Analisando a planta com Inteligência Artificial...</p>
+        </div>
+
+        <!-- Área de Resultado -->
+        <div id="resultContainer" class="hidden mt-6 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+            <h2 class="font-bold text-emerald-900 text-lg mb-2">Resultado da Análise:</h2>
+            <div id="resultText" class="text-gray-700 whitespace-pre-line text-sm"></div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript para conectar com o Backend -->
+    <script>
+        const form = document.getElementById('uploadForm');
+        const imageInput = document.getElementById('imageInput');
+        const loading = document.getElementById('loading');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultText = document.getElementById('resultText');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!imageInput.files[0]) {
+                alert('Por favor, selecione uma imagem primeiro!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', imageInput.files[0]);
+
+            // Mostra o loading e esconde resultados anteriores
+            loading.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/analisar-planta', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Erro ao processar a imagem.');
+
+                const data = await response.json();
+                
+                // Exibe a resposta
+                resultText.textContent = data.analise;
+                resultContainer.classList.remove('hidden');
+            } catch (error) {
+                alert('Ocorreu um erro ao conectar com o servidor.');
+                console.error(error);
+            } finally {
+                loading.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
