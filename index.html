@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content5="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FloraLab - Analisador de Ambientes</title>
     <style>
         body {
@@ -18,7 +18,7 @@
         .container {
             max-width: 500px;
             width: 100%;
-            background: #white;
+            background: white;
             padding: 20px;
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -68,7 +68,6 @@
         <h1>🌿 FloraLab</h1>
         <p>Aponte a câmera para o seu ambiente e descubra quais plantas se adaptam melhor.</p>
 
-        <!-- Input de câmera nativo do celular -->
         <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="processarFoto(this)">
         
         <button class="btn-camera" onclick="document.getElementById('cameraInput').click()">📸 Tirar Foto do Ambiente</button>
@@ -83,7 +82,6 @@
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 
-                // Mostra o preview da foto na tela
                 const preview = document.getElementById('preview');
                 preview.src = URL.createObjectURL(file);
                 preview.style.display = 'block';
