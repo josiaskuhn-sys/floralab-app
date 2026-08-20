@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FloraLab - Diagnóstico e Plantas</title>
+    <title>FloraLab - Guia Botânico Inteligente</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            /* Fundo com temática botânica elegante e sobreposição esverdeada */
-            background: linear-gradient(rgba(20, 40, 25, 0.75), rgba(20, 40, 25, 0.85)), 
+            background: linear-gradient(rgba(20, 40, 25, 0.78), rgba(20, 40, 25, 0.88)), 
                         url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1200&q=80') center/cover fixed;
             color: #333;
             margin: 0;
@@ -20,40 +19,42 @@
             box-sizing: border-box;
         }
         .container {
-            max-width: 500px;
+            max-width: 520px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
             padding: 24px;
             border-radius: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
             text-align: center;
             box-sizing: border-box;
             margin-top: 10px;
         }
-        h1 { color: #1e4628; font-size: 28px; margin-bottom: 6px; }
-        .subtitle { color: #555; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
+        h1 { color: #1e4628; font-size: 26px; margin-bottom: 6px; }
+        .subtitle { color: #555; font-size: 13px; margin-bottom: 16px; line-height: 1.4; }
         
-        /* Sistema de Abas */
+        /* Sistema de Abas (4 abas) */
         .tabs {
             display: flex;
-            gap: 8px;
+            gap: 4px;
             margin-bottom: 20px;
-            background: #e6ede6;
+            background: #e2ede2;
             padding: 4px;
             border-radius: 12px;
+            overflow-x: auto;
         }
         .tab-btn {
             flex: 1;
-            padding: 10px;
+            padding: 8px 4px;
             border: none;
             background: transparent;
             color: #2c5e3b;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 11px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            white-space: nowrap;
         }
         .tab-btn.active {
             background: #2c5e3b;
@@ -76,7 +77,7 @@
             color: white;
             border: none;
             padding: 14px 20px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
@@ -85,10 +86,26 @@
             transition: background 0.2s;
         }
         .btn-acao:active { background-color: #1e4028; }
+
+        /* Estilo para inputs e selects globais */
+        .input-global {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #c8d8c8;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .input-global:focus { border-color: #2c5e3b; }
         
+        textarea.input-global { resize: vertical; height: 90px; }
+
         .preview {
             width: 100%;
-            max-height: 220px;
+            max-height: 200px;
             object-fit: cover;
             border-radius: 12px;
             margin-top: 15px;
@@ -100,90 +117,132 @@
             padding: 16px;
             border-radius: 12px;
             border-left: 5px solid #2c5e3b;
-            font-size: 14px;
+            font-size: 13px;
             line-height: 1.6;
             display: none;
             word-break: break-word;
             color: #222;
         }
-        .resultado-box h3 { color: #2c5e3b; margin-top: 0; }
+        .resultado-box h3 { color: #2c5e3b; margin-top: 0; font-size: 15px; }
+
+        /* Lista de Notas */
+        .nota-card {
+            background: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e8e0;
+            position: relative;
+        }
+        .nota-card p { margin: 0; text-align: left; color: #333; font-size: 13px; }
+        .btn-apagar {
+            background: #d9534f;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            font-size: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🌿 FloraLab</h1>
-        <p class="subtitle">Seu assistente inteligente de jardinagem e paisagismo interno.</p>
+        <h1>🌿 FloraLab Pro</h1>
+        <p class="subtitle">Análise de ambientes, guias de plantio e plantas do mundo todo.</p>
 
-        <!-- Abas de Navegação -->
+        <!-- 4 Abas de Navegação -->
         <div class="tabs">
-            <button class="tab-btn active" onclick="mudarAba('ambiente')">☀️ Analisar Luz/Espaço</button>
-            <button class="tab-btn" onclick="mudarAba('plantas')">🌿 Sugerir Plantas</button>
+            <button class="tab-btn active" onclick="mudarAba('ambiente')">☀️ Luz & Espaço</button>
+            <button class="tab-btn" onclick="mudarAba('plantas')">🌱 Sugestões</button>
+            <button class="tab-btn" onclick="mudarAba('mundo')">🌍 Mundo & Clima</button>
+            <button class="tab-btn" onclick="mudarAba('notas')">📝 Minhas Notas</button>
         </div>
 
-        <!-- ABA 1: ANALISAR AMBIENTE -->
+        <!-- ABA 1: ANALISAR AMBIENTE (Existente mantida) -->
         <div id="aba-ambiente" class="section-content active">
-            <p>Fotografe o cômodo para receber um diagnóstico detalhado da iluminação e do espaço disponível.</p>
+            <p>Fotografe o cômodo para avaliar a iluminação e o espaço disponível com dicas de plantio.</p>
             <input type="file" id="inputAmbiente" accept="image/*" capture="environment" style="display:none;" onchange="processarFoto(this, 'resultadoAmbiente', 'previewAmbiente')">
             <button class="btn-acao" onclick="document.getElementById('inputAmbiente').click()">📸 Fotografar Ambiente</button>
-            <img id="previewAmbiente" class="preview" alt="Preview do ambiente">
+            <img id="previewAmbiente" class="preview" alt="Preview">
             <div id="resultadoAmbiente" class="resultado-box"></div>
         </div>
 
-        <!-- ABA 2: SUGERIR PLANTAS -->
+        <!-- ABA 2: SUGERIR PLANTAS (Existente mantida) -->
         <div id="aba-plantas" class="section-content">
-            <p>Fotografe o cantinho exato onde deseja colocar verde para receber recomendações de espécies.</p>
+            <p>Fotografe o cantinho exato onde deseja colocar verde para receber recomendações de espécies e cultivo.</p>
             <input type="file" id="inputPlantas" accept="image/*" capture="environment" style="display:none;" onchange="processarFoto(this, 'resultadoPlantas', 'previewPlantas')">
             <button class="btn-acao" onclick="document.getElementById('inputPlantas').click()">🌱 Escolher Plantas Ideais</button>
-            <img id="previewPlantas" class="preview" alt="Preview do local">
+            <img id="previewPlantas" class="preview" alt="Preview">
             <div id="resultadoPlantas" class="resultado-box"></div>
+        </div>
+
+        <!-- ABA 3: MUNDO & CLIMA (NOVO: Explorador Global) -->
+        <div id="aba-mundo" class="section-content">
+            <p>Descubra plantas de outros países que se adaptam perfeitamente ao clima do Brasil, com história e formas de cultivo.</p>
+            
+            <label style="font-size:12px; font-weight:bold; color:#2c5e3b; display:block; text-align:left; margin-bottom:4px;">País de Origem:</label>
+            <input type="text" id="paisInput" class="input-global" placeholder="Ex: Noruega, Japão, Holanda, Austrália...">
+
+            <label style="font-size:12px; font-weight:bold; color:#2c5e3b; display:block; text-align:left; margin-bottom:4px;">Sua Região / Clima no Brasil:</label>
+            <input type="text" id="regiaoInput" class="input-global" placeholder="Ex: Sul (frio/úmido), Nordeste (quente)...">
+
+            <button class="btn-acao" onclick="explorarPaisOrigem()">🌐 Explorar Plantas & Cultivo</button>
+            <div id="resultadoMundo" class="resultado-box"></div>
+        </div>
+
+        <!-- ABA 4: MINHAS NOTAS (NOVO: Diário de Cultivo) -->
+        <div id="aba-notas" class="section-content">
+            <p>Anote observações sobre suas regas, adubações e desenvolvimento das plantas.</p>
+            
+            <input type="text" id="tituloNota" class="input-global" placeholder="Título (Ex: Rega da Costela-de-Adão)">
+            <textarea id="corpoNota" class="input-global" placeholder="Escreva sua observação ou dica de plantio aqui..."></textarea>
+            
+            <button class="btn-acao" onclick="salvarNota()">💾 Salvar Nota</button>
+            
+            <div id="listaNotas" style="margin-top: 20px;"></div>
         </div>
 
     </div>
 
     <script>
+        // Função de troca de abas
         function mudarAba(aba) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
 
-            if (aba === 'ambiente') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('aba-ambiente').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('aba-plantas').classList.add('active');
-            }
+            const indexMap = { 'ambiente': 0, 'plantas': 1, 'mundo': 2, 'notas': 3 };
+            document.querySelectorAll('.tab-btn')[indexMap[aba]].classList.add('active');
+            document.getElementById('aba-' + aba).classList.add('active');
+
+            if(aba === 'notas') carregarNotas();
         }
 
+        // Funções de análise por foto (Existentes)
         async function processarFoto(input, resultadoId, previewId) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
-                
                 const preview = document.getElementById(previewId);
                 preview.src = URL.createObjectURL(file);
                 preview.style.display = 'block';
 
                 const resultadoDiv = document.getElementById(resultadoId);
                 resultadoDiv.style.display = 'block';
-                resultadoDiv.innerHTML = "⏳ <strong>Analisando com Inteligência Artificial...</strong>";
+                resultadoDiv.innerHTML = "⏳ <strong>Analisando com IA...</strong>";
 
                 let formData = new FormData();
                 formData.append("file", file);
 
                 try {
-                    let response = await fetch('/analisar-ambiente', {
-                        method: 'POST',
-                        body: formData
-                    });
-
+                    let response = await fetch('/analisar-ambiente', { method: 'POST', body: formData });
                     let data = await response.json();
 
                     if (response.ok) {
-                        let textoFormatado = data.resultado
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/\n/g, '<br>');
-                        
-                        resultadoDiv.innerHTML = "<h3>💡 Resultado da Análise</h3>" + textoFormatado;
+                        let textoFormatado = data.resultado.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                        resultadoDiv.innerHTML = "<h3>💡 Diagnóstico & Cultivo</h3>" + textoFormatado;
                     } else {
                         resultadoDiv.innerHTML = "❌ <strong>Erro:</strong> " + (data.detail || "Tente novamente.");
                     }
@@ -191,6 +250,85 @@
                     resultadoDiv.innerHTML = "❌ <strong>Erro de conexão com o servidor.</strong>";
                 }
             }
+        }
+
+        // Nova Função: Explorar Plantas do Mundo Adaptadas ao Brasil
+        async function explorarPaisOrigem() {
+            const pais = document.getElementById('paisInput').value.trim();
+            const regiao = document.getElementById('regiaoInput').value.trim();
+            const resultadoDiv = document.getElementById('resultadoMundo');
+
+            if (!pais) {
+                alert("Por favor, digite o nome de um país.");
+                return;
+            }
+
+            resultadoDiv.style.display = 'block';
+            resultadoDiv.innerHTML = `⏳ <strong>Buscando espécies da ${pais} adaptadas para o Brasil (${regiao || 'Geral'})...</strong>`;
+
+            try {
+                let response = await fetch('/explorar-pais', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pais: `${pais} (considerando adaptação para região: ${regiao})` })
+                });
+
+                let data = await response.json();
+
+                if (response.ok) {
+                    let textoFormatado = data.resultado.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                    resultadoDiv.innerHTML = `<h3>🌍 Espécies de ${pais} para o Brasil</h3>` + textoFormatado;
+                } else {
+                    resultadoDiv.innerHTML = "❌ <strong>Erro na consulta:</strong> " + (data.detail || "Tente novamente.");
+                }
+            } catch (error) {
+                resultadoDiv.innerHTML = "❌ <strong>Erro de conexão com o servidor.</strong>";
+            }
+        }
+
+        // Funções para o Diário de Notas (Salva no navegador do usuário)
+        function salvarNota() {
+            const titulo = document.getElementById('tituloNota').value.trim();
+            const corpo = document.getElementById('corpoNota').value.trim();
+
+            if (!titulo || !corpo) {
+                alert("Preencha o título e o conteúdo da nota!");
+                return;
+            }
+
+            let notas = JSON.parse(localStorage.getItem('floralab_notas') || '[]');
+            notas.unshift({ id: Date.now(), titulo, corpo, data: new Date().toLocaleDateString('pt-BR') });
+            localStorage.setItem('floralab_notas', JSON.stringify(notas));
+
+            document.getElementById('tituloNota').value = '';
+            document.getElementById('corpoNota').value = '';
+            carregarNotas();
+        }
+
+        function carregarNotas() {
+            let notas = JSON.parse(localStorage.getItem('floralab_notas') || '[]');
+            const container = document.getElementById('listaNotas');
+
+            if (notas.length === 0) {
+                container.innerHTML = "<p style='color:#777; font-size:13px; text-align:center;'>Nenhuma nota salva ainda.</p>";
+                return;
+            }
+
+            container.innerHTML = notas.map(n => `
+                <div class="nota-card">
+                    <button class="btn-apagar" onclick="apagarNota(${n.id})">Excluir</button>
+                    <strong style="color:#2c5e3b; font-size:14px;">${n.titulo}</strong>
+                    <span style="font-size:10px; color:#888; display:block; margin-bottom:4px;">${n.data}</span>
+                    <p>${n.corpo}</p>
+                </div>
+            `).join('');
+        }
+
+        function apagarNota(id) {
+            let notas = JSON.parse(localStorage.getItem('floralab_notas') || '[]');
+            notas = notas.filter(n => n.id !== id);
+            localStorage.setItem('floralab_notas', JSON.stringify(notas));
+            carregarNotas();
         }
     </script>
 
