@@ -28,12 +28,37 @@ async def analisar_ambiente(file: UploadFile = File(...)):
         
         prompt = (
             "Analise este ambiente mostrado na imagem. Avalie a incidência de luz natural, "
-            "o espaço disponível e o estilo do local. Com base nisso, recomende 3 espécies de plantas "
+            "o espaço disponível e o estilo do local. Com base nisso, recomende espécies de plantas "
             "que se adaptariam perfeitamente a este espaço, incluindo dicas práticas de plantio e cultivo. "
             "Retorne a resposta de forma clara e estruturada contendo: "
             "1. Diagnóstico do ambiente (luz e espaço). "
-            "2. As 3 plantas recomendadas (nome popular e científico). "
+            "2. As espécies recomendadas (nome popular e científico). "
             "3. Guia passo a passo de como plantar e cuidar de cada uma."
+        )
+        
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=[prompt, image]
+        )
+        
+        return {"resultado": response.text}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/avaliar-planta")
+async def avaliar_planta(file: UploadFile = File(...)):
+    try:
+        image_bytes = await file.read()
+        image = Image.open(io.BytesIO(image_bytes))
+        
+        prompt = (
+            "Analise esta planta mostrada na imagem. "
+            "Forneça um relatório botânico completo contendo: "
+            "1. Identificação (Nome popular e científico da espécie). "
+            "2. Estado de saúde e diagnóstico (análise de folhas, vitalidade ou sinais de pragas/doenças). "
+            "3. Guia prático de plantio/replantio e tipo de solo ideal. "
+            "4. Cuidados essenciais de rega, luz e adubação."
         )
         
         response = client.models.generate_content(

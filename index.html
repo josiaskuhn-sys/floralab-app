@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FloraLab - Guia Botânico Inteligente</title>
+    <title>FloraLab Pro - Guia Botânico Inteligente</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -33,7 +33,7 @@
         h1 { color: #1e4628; font-size: 26px; margin-bottom: 6px; }
         .subtitle { color: #555; font-size: 13px; margin-bottom: 16px; line-height: 1.4; }
         
-        /* Sistema de Abas (4 abas) */
+        /* 4 Abas de Navegação */
         .tabs {
             display: flex;
             gap: 4px;
@@ -87,7 +87,6 @@
         }
         .btn-acao:active { background-color: #1e4028; }
 
-        /* Estilo para inputs e selects globais */
         .input-global {
             width: 100%;
             padding: 12px;
@@ -125,14 +124,12 @@
         }
         .resultado-box h3 { color: #2c5e3b; margin-top: 0; font-size: 15px; }
 
-        /* Lista de Notas */
         .nota-card {
             background: #fff;
             padding: 10px 14px;
             border-radius: 8px;
             margin-bottom: 10px;
             border: 1px solid #e0e8e0;
-            position: relative;
         }
         .nota-card p { margin: 0; text-align: left; color: #333; font-size: 13px; }
         .btn-apagar {
@@ -152,49 +149,51 @@
 
     <div class="container">
         <h1>🌿 FloraLab Pro</h1>
-        <p class="subtitle">Análise de ambientes, guias de plantio e plantas do mundo todo.</p>
+        <p class="subtitle">Análise de ambientes, avaliação de plantas, guias de plantio e espécies globais.</p>
 
         <!-- 4 Abas de Navegação -->
         <div class="tabs">
             <button class="tab-btn active" onclick="mudarAba('ambiente')">☀️ Luz & Espaço</button>
-            <button class="tab-btn" onclick="mudarAba('plantas')">🌱 Sugestões</button>
+            <button class="tab-btn" onclick="mudarAba('plantas')">🌱 Avaliar Planta</button>
             <button class="tab-btn" onclick="mudarAba('mundo')">🌍 Mundo & Clima</button>
             <button class="tab-btn" onclick="mudarAba('notas')">📝 Minhas Notas</button>
         </div>
 
-        <!-- ABA 1: ANALISAR AMBIENTE (Existente mantida) -->
+        <!-- ABA 1: ANALISAR AMBIENTE (Câmera ou Galeria) -->
         <div id="aba-ambiente" class="section-content active">
-            <p>Fotografe o cômodo para avaliar a iluminação e o espaço disponível com dicas de plantio.</p>
-            <input type="file" id="inputAmbiente" accept="image/*" capture="environment" style="display:none;" onchange="processarFoto(this, 'resultadoAmbiente', 'previewAmbiente')">
-            <button class="btn-acao" onclick="document.getElementById('inputAmbiente').click()">📸 Fotografar Ambiente</button>
+            <p>Envie uma foto do cômodo (da galeria ou tirada agora) para avaliar iluminação, espaço e dicas de plantio.</p>
+            <!-- Sem 'capture' para permitir escolher entre Câmera e Galeria -->
+            <input type="file" id="inputAmbiente" accept="image/*" style="display:none;" onchange="processarFoto(this, '/analisar-ambiente', 'resultadoAmbiente', 'previewAmbiente')">
+            <button class="btn-acao" onclick="document.getElementById('inputAmbiente').click()">📁 Enviar Foto do Ambiente</button>
             <img id="previewAmbiente" class="preview" alt="Preview">
             <div id="resultadoAmbiente" class="resultado-box"></div>
         </div>
 
-        <!-- ABA 2: SUGERIR PLANTAS (Existente mantida) -->
+        <!-- ABA 2: AVALIAR PLANTA (Câmera ou Galeria) -->
         <div id="aba-plantas" class="section-content">
-            <p>Fotografe o cantinho exato onde deseja colocar verde para receber recomendações de espécies e cultivo.</p>
-            <input type="file" id="inputPlantas" accept="image/*" capture="environment" style="display:none;" onchange="processarFoto(this, 'resultadoPlantas', 'previewPlantas')">
-            <button class="btn-acao" onclick="document.getElementById('inputPlantas').click()">🌱 Escolher Plantas Ideais</button>
+            <p>Envie a foto de uma planta para identificar a espécie, checar a saúde, ver guias de plantio e cuidados.</p>
+            <!-- Sem 'capture' para permitir escolher entre Câmera e Galeria -->
+            <input type="file" id="inputPlantas" accept="image/*" style="display:none;" onchange="processarFoto(this, '/avaliar-planta', 'resultadoPlantas', 'previewPlantas')">
+            <button class="btn-acao" onclick="document.getElementById('inputPlantas').click()">🌿 Enviar Foto da Planta</button>
             <img id="previewPlantas" class="preview" alt="Preview">
             <div id="resultadoPlantas" class="resultado-box"></div>
         </div>
 
-        <!-- ABA 3: MUNDO & CLIMA (NOVO: Explorador Global) -->
+        <!-- ABA 3: MUNDO & CLIMA -->
         <div id="aba-mundo" class="section-content">
-            <p>Descubra plantas de outros países que se adaptam perfeitamente ao clima do Brasil, com história e formas de cultivo.</p>
+            <p>Descubra plantas de outros países adaptadas ao clima do Brasil, com história e formas de cultivo.</p>
             
             <label style="font-size:12px; font-weight:bold; color:#2c5e3b; display:block; text-align:left; margin-bottom:4px;">País de Origem:</label>
             <input type="text" id="paisInput" class="input-global" placeholder="Ex: Noruega, Japão, Holanda, Austrália...">
 
-            <label style="font-size:12px; font-weight:bold; color:#2c5e3b; display:block; text-align:left; margin-bottom:4px;">Sua Região / Clima no Brasil:</label>
-            <input type="text" id="regiaoInput" class="input-global" placeholder="Ex: Sul (frio/úmido), Nordeste (quente)...">
+            <label style="font-size:12px; font-weight:bold; color:#2c5e3b; display:block; text-align:left; margin-bottom:4px;">Sua Região no Brasil:</label>
+            <input type="text" id="regiaoInput" class="input-global" placeholder="Ex: Sul, Sudeste, Nordeste...">
 
             <button class="btn-acao" onclick="explorarPaisOrigem()">🌐 Explorar Plantas & Cultivo</button>
             <div id="resultadoMundo" class="resultado-box"></div>
         </div>
 
-        <!-- ABA 4: MINHAS NOTAS (NOVO: Diário de Cultivo) -->
+        <!-- ABA 4: MINHAS NOTAS -->
         <div id="aba-notas" class="section-content">
             <p>Anote observações sobre suas regas, adubações e desenvolvimento das plantas.</p>
             
@@ -209,7 +208,6 @@
     </div>
 
     <script>
-        // Função de troca de abas
         function mudarAba(aba) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
@@ -221,8 +219,7 @@
             if(aba === 'notas') carregarNotas();
         }
 
-        // Funções de análise por foto (Existentes)
-        async function processarFoto(input, resultadoId, previewId) {
+        async function processarFoto(input, endpointUrl, resultadoId, previewId) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 const preview = document.getElementById(previewId);
@@ -231,18 +228,18 @@
 
                 const resultadoDiv = document.getElementById(resultadoId);
                 resultadoDiv.style.display = 'block';
-                resultadoDiv.innerHTML = "⏳ <strong>Analisando com IA...</strong>";
+                resultadoDiv.innerHTML = "⏳ <strong>Processando imagem com IA...</strong>";
 
                 let formData = new FormData();
                 formData.append("file", file);
 
                 try {
-                    let response = await fetch('/analisar-ambiente', { method: 'POST', body: formData });
+                    let response = await fetch(endpointUrl, { method: 'POST', body: formData });
                     let data = await response.json();
 
                     if (response.ok) {
                         let textoFormatado = data.resultado.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-                        resultadoDiv.innerHTML = "<h3>💡 Diagnóstico & Cultivo</h3>" + textoFormatado;
+                        resultadoDiv.innerHTML = "<h3>💡 Relatório Botânico</h3>" + textoFormatado;
                     } else {
                         resultadoDiv.innerHTML = "❌ <strong>Erro:</strong> " + (data.detail || "Tente novamente.");
                     }
@@ -252,7 +249,6 @@
             }
         }
 
-        // Nova Função: Explorar Plantas do Mundo Adaptadas ao Brasil
         async function explorarPaisOrigem() {
             const pais = document.getElementById('paisInput').value.trim();
             const regiao = document.getElementById('regiaoInput').value.trim();
@@ -286,7 +282,6 @@
             }
         }
 
-        // Funções para o Diário de Notas (Salva no navegador do usuário)
         function salvarNota() {
             const titulo = document.getElementById('tituloNota').value.trim();
             const corpo = document.getElementById('corpoNota').value.trim();
