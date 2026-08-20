@@ -3,36 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FloraLab - Recomendações de Plantas</title>
+    <title>FloraLab - Diagnóstico e Plantas</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f4f7f4;
+            /* Fundo com temática botânica elegante e sobreposição esverdeada */
+            background: linear-gradient(rgba(20, 40, 25, 0.75), rgba(20, 40, 25, 0.85)), 
+                        url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1200&q=80') center/cover fixed;
             color: #333;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
         .container {
             max-width: 500px;
             width: 100%;
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             text-align: center;
             box-sizing: border-box;
+            margin-top: 10px;
         }
-        h1 { color: #2c5e3b; font-size: 26px; margin-bottom: 8px; }
-        p { color: #666; font-size: 14px; margin-bottom: 24px; line-height: 1.4; }
-        .btn-camera {
+        h1 { color: #1e4628; font-size: 28px; margin-bottom: 6px; }
+        .subtitle { color: #555; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
+        
+        /* Sistema de Abas */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: #e6ede6;
+            padding: 4px;
+            border-radius: 12px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: #2c5e3b;
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: #2c5e3b;
+            color: white;
+            box-shadow: 0 2px 6px rgba(44, 94, 59, 0.3);
+        }
+
+        .section-content { display: none; text-align: left; }
+        .section-content.active { display: block; }
+
+        .section-content p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .btn-acao {
             background-color: #2c5e3b;
             color: white;
             border: none;
-            padding: 16px 24px;
-            font-size: 16px;
+            padding: 14px 20px;
+            font-size: 15px;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
@@ -40,57 +84,88 @@
             box-shadow: 0 4px 10px rgba(44, 94, 59, 0.3);
             transition: background 0.2s;
         }
-        .btn-camera:active { background-color: #1e4028; }
-        #preview {
+        .btn-acao:active { background-color: #1e4028; }
+        
+        .preview {
             width: 100%;
-            max-height: 250px;
+            max-height: 220px;
             object-fit: cover;
             border-radius: 12px;
             margin-top: 15px;
             display: none;
         }
-        #resultadoAnalise {
+        .resultado-box {
             margin-top: 20px;
-            text-align: left;
-            background: #f9fbf9;
-            padding: 18px;
+            background: #f4f7f4;
+            padding: 16px;
             border-radius: 12px;
             border-left: 5px solid #2c5e3b;
             font-size: 14px;
             line-height: 1.6;
             display: none;
             word-break: break-word;
+            color: #222;
         }
-        #resultadoAnalise h3 { color: #2c5e3b; margin-top: 0; }
+        .resultado-box h3 { color: #2c5e3b; margin-top: 0; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>🌿 FloraLab</h1>
-        <p>Aponte a câmera para o local onde quer colocar verde. O app analisa a luz e escolhe as plantas perfeitas para você!</p>
+        <p class="subtitle">Seu assistente inteligente de jardinagem e paisagismo interno.</p>
 
-        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="processarFoto(this)">
-        
-        <button class="btn-camera" onclick="document.getElementById('cameraInput').click()">📸 Analisar Espaço & Plantas</button>
+        <!-- Abas de Navegação -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="mudarAba('ambiente')">☀️ Analisar Luz/Espaço</button>
+            <button class="tab-btn" onclick="mudarAba('plantas')">🌿 Sugerir Plantas</button>
+        </div>
 
-        <img id="preview" alt="Foto do ambiente">
+        <!-- ABA 1: ANALISAR AMBIENTE -->
+        <div id="aba-ambiente" class="section-content active">
+            <p>Fotografe o cômodo para receber um diagnóstico detalhado da iluminação e do espaço disponível.</p>
+            <input type="file" id="inputAmbiente" accept="image/*" capture="environment" style="display:none;" onchange="processarFoto(this, 'resultadoAmbiente', 'previewAmbiente')">
+            <button class="btn-acao" onclick="document.getElementById('inputAmbiente').click()">📸 Fotografar Ambiente</button>
+            <img id="previewAmbiente" class="preview" alt="Preview do ambiente">
+            <div id="resultadoAmbiente" class="resultado-box"></div>
+        </div>
 
-        <div id="resultadoAnalise"></div>
+        <!-- ABA 2: SUGERIR PLANTAS -->
+        <div id="aba-plantas" class="section-content">
+            <p>Fotografe o cantinho exato onde deseja colocar verde para receber recomendações de espécies.</p>
+            <input type="file" id="inputPlantas" accept="image/*" capture="environment" style="display:none;" onchange="processarFoto(this, 'resultadoPlantas', 'previewPlantas')">
+            <button class="btn-acao" onclick="document.getElementById('inputPlantas').click()">🌱 Escolher Plantas Ideais</button>
+            <img id="previewPlantas" class="preview" alt="Preview do local">
+            <div id="resultadoPlantas" class="resultado-box"></div>
+        </div>
+
     </div>
 
     <script>
-        async function processarFoto(input) {
+        function mudarAba(aba) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+
+            if (aba === 'ambiente') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('aba-ambiente').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('aba-plantas').classList.add('active');
+            }
+        }
+
+        async function processarFoto(input, resultadoId, previewId) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 
-                const preview = document.getElementById('preview');
+                const preview = document.getElementById(previewId);
                 preview.src = URL.createObjectURL(file);
                 preview.style.display = 'block';
 
-                const resultadoDiv = document.getElementById('resultadoAnalise');
+                const resultadoDiv = document.getElementById(resultadoId);
                 resultadoDiv.style.display = 'block';
-                resultadoDiv.innerHTML = "🌱 <strong>Avaliando luminosidade e selecionando as plantas ideais...</strong>";
+                resultadoDiv.innerHTML = "⏳ <strong>Analisando com Inteligência Artificial...</strong>";
 
                 let formData = new FormData();
                 formData.append("file", file);
@@ -104,14 +179,13 @@
                     let data = await response.json();
 
                     if (response.ok) {
-                        // Formata a resposta para destacar bem na tela do celular
                         let textoFormatado = data.resultado
-                            .replace(/\*\*(.*?)\*\* /g, '<strong>$1</strong><br>')
+                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                             .replace(/\n/g, '<br>');
                         
-                        resultadoDiv.innerHTML = "<h3>💡 Diagnóstico & Plantas Ideais</h3>" + textoFormatado;
+                        resultadoDiv.innerHTML = "<h3>💡 Resultado da Análise</h3>" + textoFormatado;
                     } else {
-                        resultadoDiv.innerHTML = "❌ <strong>Erro na análise:</strong> " + (data.detail || "Tente novamente.");
+                        resultadoDiv.innerHTML = "❌ <strong>Erro:</strong> " + (data.detail || "Tente novamente.");
                     }
                 } catch (error) {
                     resultadoDiv.innerHTML = "❌ <strong>Erro de conexão com o servidor.</strong>";
